@@ -1,0 +1,29 @@
+server {
+	listen 80;
+	server_name _;
+  root /var/www/html/public;
+	index index.php;
+	location ~ \.php$ {
+		try_files $uri =404;
+		#Include Nginx’s fastcgi configuration
+		include /etc/nginx/fastcgi.conf;
+		#Look for the FastCGI Process Manager at this location
+		fastcgi_pass 127.0.0.1:9000;
+	}
+  location / {
+      try_files $uri /index.php?$query_string;
+  }
+  location ~* \.(js|css|png|jpg|jpeg|gif|ico|html|svg)$ {
+      try_files $uri =404;
+      expires max;
+      add_header Pragma public;
+      add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+  }
+  location = /favicon.ico { log_not_found off; access_log off; }
+  location = /robots.txt  { log_not_found off; access_log off; }
+  # Deny .htaccess file access
+  location ~ /\.ht {
+      deny all;
+  }
+
+}

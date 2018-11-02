@@ -1,0 +1,29 @@
+version: "3"
+services:
+    app:
+      ports:
+        - '8819:80'
+      image: minepos
+      build: ./build
+      environment:
+        - DB_HOST=db
+        - DB_PORT=3306
+        - DB_USERNAME=minepos
+        - DB_PASSWORD=minepos
+        - DB_DATABASE=minepos
+        - APP_NAME=MinePoS
+      volumes:
+        - './storage:/var/www/html/storage'
+
+    db:
+      image: mariadb
+      restart: always
+      environment:
+        - MYSQL_USER=minepos
+        - MYSQL_PASSWORD=minepos
+        - MYSQL_DATABASE=minepos
+        - MYSQL_RANDOM_ROOT_PASSWORD=yes
+#      ports:
+#        - 3306:3306
+      volumes:
+        - ./data/db:/var/lib/mysql
