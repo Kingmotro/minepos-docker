@@ -6,7 +6,7 @@ ARG version
 RUN chown -R www-data:www-data /var/www
 USER www-data
 WORKDIR /var/www/html
-ADD https://github.com/MinePoS/Backend/archive/$version.tar.gz /tmp/minepos.tar.gz
+RUN curl -L -o /tmp/minepos.tar.gz https://github.com/MinePoS/Backend/archive/$version.tar.gz
 #COPY $version.tar.gz /tmp/minepos.tar.gz
 RUN tar -xvzf /tmp/minepos.tar.gz -C /var/www/html --strip-components=1
 RUN curl --silent --show-error https://getcomposer.org/installer | php && php composer.phar install --ignore-platform-reqs
@@ -66,6 +66,5 @@ ENV APP_NAME=MinePOS \
 
 VOLUME ["/var/www/html/storage", "/var/www/html/config"]
 USER root
-RUN chmod +x /entrypoint.sh; chmod +x /firstrun.sh
-
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
