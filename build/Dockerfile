@@ -1,6 +1,8 @@
 # use the cli argument "--build-arg version=<value>" to build a version other than master
 ARG version=master
 
+# Doing this separate allows us to cache the composer dependencies when rebuilding.
+
 FROM php:7-fpm-alpine as webfiles
 ARG version
 RUN chown -R www-data:www-data /var/www
@@ -16,7 +18,7 @@ FROM php:7.1.13-fpm
 
 MAINTAINER FNAME LNAME <EMAIL@MAIL.TLD>
 
-RUN export DEBIAN_FRONTEND=noninteractive; apt-get update; apt-get install -y supervisor nginx mariadb-server autoconf pkg-config libssl-dev  git zip libpng-dev libxml2-dev
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get update; apt-get install -y supervisor nginx autoconf pkg-config libssl-dev  git zip libpng-dev libxml2-dev
 RUN docker-php-ext-install   pdo_mysql gd mbstring bcmath  zip # bcmath xml pdo
 
 
@@ -65,6 +67,14 @@ ENV APP_NAME=MinePOS \
   MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
 
 VOLUME ["/var/www/html/storage", "/var/www/html/config"]
+
 USER root
+# Cleanup
+
+apt-get clean autoclean
+apt-get autoremove --yes
+rm -rf /var/lib/{apt,dpkg,cache,log}/
+
+
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
