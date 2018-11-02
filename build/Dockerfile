@@ -6,8 +6,8 @@ ARG version
 RUN chown -R www-data:www-data /var/www
 USER www-data
 WORKDIR /var/www/html
-#ADD https://github.com/MinePoS/Backend/archive/$version.tar.gz /tmp/minepos.tar.gz
-COPY $version.tar.gz /tmp/minepos.tar.gz
+ADD https://github.com/MinePoS/Backend/archive/$version.tar.gz /tmp/minepos.tar.gz
+#COPY $version.tar.gz /tmp/minepos.tar.gz
 RUN tar -xvzf /tmp/minepos.tar.gz -C /var/www/html --strip-components=1
 RUN curl --silent --show-error https://getcomposer.org/installer | php && php composer.phar install --ignore-platform-reqs
 RUN cp -R storage storage_orig

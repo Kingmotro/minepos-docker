@@ -6,7 +6,6 @@ if [[ "$1" = "firstrun" ]] || [[ ! -f storage/settings.json ]];  then
   cd /var/www/html
   rm -rf storage/*
   cp -R storage_orig/* storage/
-
   echo "APP_KEY=" > storage/env.docker
 
   ln -s storage/env.docker .env
@@ -17,5 +16,4 @@ if [[ "$1" = "firstrun" ]] || [[ ! -f storage/settings.json ]];  then
 else
   ln -s storage/env.docker .env
 fi
-
 /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
