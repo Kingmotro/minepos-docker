@@ -14,26 +14,23 @@ RUN tar -xvzf /tmp/minepos.tar.gz -C /var/www/html --strip-components=1
 RUN curl --silent --show-error https://getcomposer.org/installer | php && php composer.phar install --ignore-platform-reqs
 RUN cp -R storage storage_orig
 
-FROM php:7.1.13-fpm
+FROM php:7-fpm-alpine
 
 MAINTAINER FNAME LNAME <EMAIL@MAIL.TLD>
 
-RUN export DEBIAN_FRONTEND=noninteractive; apt-get update; apt-get install -y supervisor nginx autoconf pkg-config libssl-dev  git zip libpng-dev libxml2-dev
-RUN docker-php-ext-install   pdo_mysql gd mbstring bcmath  zip # bcmath xml pdo
+RUN apk add --no-cache supervisor nginx zip \
+    && apk add --no-cache --virtual .build-deps libressl-dev libpng-dev libxml2-dev  \
+    && docker-php-ext-install   pdo_mysql gd mbstring bcmath  zip # bcmath xml pdo \
+    && apk del --no-cache .build-deps
 
 
 # Add Configuration files for all programs
 ADD files /
 
-# install minepos
-#RUN chown -R www-data:www-data /var/www
 USER www-data
 WORKDIR /var/www/html
 COPY --from=webfiles --chown=www-data:www-data /var/www/html /var/www/html
-RUN  chmod -R 755 /var/www/html/storage/* /var/www/html/bootstrap/cache /var/www/html/public/*
-
-
-
+RUN  chmod -R 755 /var/www/html/storage/* /var/www/html/bootstrap/cache /var/www/html/public
 
 ENV APP_NAME=MinePOS \
   APP_DEBUG=true \
@@ -69,12 +66,6 @@ ENV APP_NAME=MinePOS \
 VOLUME ["/var/www/html/storage", "/var/www/html/config"]
 
 USER root
-# Cleanup
-
-apt-get clean autoclean
-apt-get autoremove --yes
-rm -rf /var/lib/{apt,dpkg,cache,log}/
-
-
 RUN chmod +x /entrypoint.sh
+
 ENTRYPOINT ["/entrypoint.sh"]

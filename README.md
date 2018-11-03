@@ -23,7 +23,7 @@ A stable version of the upstream project (https://github.com/MinePoS/Backend) ha
 to update to a new version of minepos, run `docker-compose up -d --build` or `$ docker-compose build && docker-compose up -d`
 
 ## About this image.
-This uses php 7 fpm as its base  
+This uses php:7-fpm-alpine as its base
 nginx has been installed (Apache is not supported by MinePoS)
 
 
@@ -34,4 +34,4 @@ TODO:
 * change some nginx and php settings to improve security
 * make image more efficient (remove stuff needed to build but not run)
 * annotate / comment each line of all the files
-* 
+* ~~decrease size of image (currently 870mb)~~ (Now down to 277mb, 1 third the size)

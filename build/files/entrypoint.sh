@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 set -e
-
+mkdir -p /var/log/supervisor
+mkdir -p /run/nginx
 if [[ "$1" = "firstrun" ]] || [[ ! -f storage/settings.json ]];  then
   echo "running first time setup!"
   cd /var/www/html
